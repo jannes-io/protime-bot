@@ -2,8 +2,10 @@ version: "3.3"
 
 services:
   protime-bot:
+    container_name: protime_bot
     image: jannes-io/protime-bot
     build:
       context: .
     restart: always
-    container_name: protime_bot
+    volumes:
+      - ./config.json:/usr/src/app/config.json
