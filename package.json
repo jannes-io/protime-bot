@@ -6,6 +6,7 @@
   "scripts": {
     "check-in": "npx playwright test",
     "start": "rollup -c && nodemon dist/protime.cjs",
+    "build": "rollup -c",
     "watch": "concurrently \"rollup -c -w\" \"nodemon dist/protime.cjs -w dist\""
   },
   "author": "",

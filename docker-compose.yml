@@ -1,0 +1,5 @@
+services:
+  protime_bot:
+    build: .
+    restart: always
+    container_name: protime_bot
