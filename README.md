@@ -31,10 +31,18 @@ Copy `config.example.json` to `config.json` and modify to your needs.
     ```
 
 #### Usage
+
+Manually:
 ```
 npm install
 npm run start
 ```
+
+Using docker:
+```
+docker-compose up -d
+```
+
 #### Development usage
 [!] Add `"dev": true` to your `config.json`, this will prevent the playwright test from actually pressing the check-in button.
 
