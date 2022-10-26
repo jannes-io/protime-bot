@@ -1,5 +1,9 @@
+version: "3.3"
+
 services:
-  protime_bot:
-    build: .
+  protime-bot:
+    image: jannes-io/protime-bot
+    build:
+      context: .
     restart: always
     container_name: protime_bot
