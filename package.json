@@ -4,13 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx playwright test"
+    "check-in": "npx playwright test",
+    "start": "rollup -c && nodemon dist/protime.cjs",
+    "watch": "concurrently \"rollup -c -w\" \"nodemon dist/protime.cjs -w dist\""
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.27.1",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-typescript": "^9.0.2",
     "@types/node": "^18.11.5",
+    "concurrently": "^7.5.0",
+    "nodemon": "^2.0.20",
+    "rollup": "^3.2.3",
+    "tslib": "^2.4.0",
     "typescript": "^4.8.4"
   },
   "type": "module",

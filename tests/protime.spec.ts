@@ -48,9 +48,7 @@ const findToday = (schedule: Schedule) => {
   return null;
 }
 
-const checkInRequired = (schedule: Schedule) => {
-  const today = findToday(schedule);
-
+const checkInRequired = (today: Day) => {
   const isWorkingDay = today.schedule !== null && !today.isPublicHoliday;
   if (!isWorkingDay) {
     return false;
@@ -66,9 +64,9 @@ const checkInRequired = (schedule: Schedule) => {
 test('protime check-in', async ({ page }) => {
   const configRaw = await fs.readFile('config.json');
   const config = JSON.parse(configRaw.toString());
-  const { email, password } = config;
+  const { email, password, tenant } = config;
 
-  await page.goto('https://ac-systems.myprotime.eu/');
+  await page.goto(`https://${tenant}.myprotime.eu/`);
 
   // Log-in
   await expect(page).toHaveURL(/^https?:\/\/authentication.+/);
@@ -93,10 +91,14 @@ test('protime check-in', async ({ page }) => {
   const headers = await tokenPromise;
   const userId = await getUserId(headers);
   const schedule = await getSchedule(headers, userId);
+  const today = findToday(schedule);
 
-  if (checkInRequired(schedule)) {
+  if (checkInRequired(today)) {
     // Check-in
     const checkinBtn = page.locator('[data-testid="clockingWidget_clockInOutBtn"]');
-    await checkinBtn.click();
+
+    if (config.dev !== true) {
+      await checkinBtn.click();
+    }
   }
 });
