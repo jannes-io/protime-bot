@@ -35,6 +35,7 @@ Copy `config.example.json` to `config.json` and modify to your needs.
 Manually:
 ```
 npm install
+npx playwright install
 npm run start
 ```
 
