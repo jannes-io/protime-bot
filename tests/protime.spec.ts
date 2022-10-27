@@ -85,7 +85,7 @@ test('protime check-in', async ({ page }) => {
     });
   });
 
-  await expect(page).toHaveURL(/^https:\/\/.+\/#\/me\//);
+  await expect(page).toHaveURL(new RegExp(`https://${tenant}.myprotime.eu.+`));
 
   // Verify check-in required
   const headers = await tokenPromise;
@@ -97,7 +97,9 @@ test('protime check-in', async ({ page }) => {
     // Check-in
     const checkinBtn = page.locator('[data-testid="clockingWidget_clockInOutBtn"]');
 
-    if (config.dev !== true) {
+    if (config.dev === true) {
+      await expect(checkinBtn).toBeVisible();
+    } else {
       await checkinBtn.click();
     }
   }
