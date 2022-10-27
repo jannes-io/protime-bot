@@ -75,20 +75,13 @@ test('protime check-in', async ({ page }) => {
   await page.getByLabel('Password').fill(password);
   await page.getByText('Let me in').click();
 
-  const tokenPromise = new Promise<Headers>((resolve) => {
-    page.on('response', async (e) => {
-      if (e.url().includes('api/auth/token')) {
-        const Authorization = (await e.body()).toString();
-        const Cookie = await e.request().headerValue('Cookie');
-        resolve({ Authorization, Cookie });
-      }
-    });
-  });
-
-  await expect(page).toHaveURL(new RegExp(`https://${tenant}.myprotime.eu.+`));
+  const tokenResponse = await page.waitForResponse(`https://${tenant}.myprotime.eu/api/auth/token`);
+  const headers = {
+    Authorization: (await tokenResponse.body()).toString(),
+    Cookie: await tokenResponse.request().headerValue('Cookie'),
+  };
 
   // Verify check-in required
-  const headers = await tokenPromise;
   const userId = await getUserId(headers);
   const schedule = await getSchedule(headers, userId);
   const today = findToday(schedule);
@@ -96,11 +89,16 @@ test('protime check-in', async ({ page }) => {
   if (checkInRequired(today)) {
     // Check-in
     const checkinBtn = page.locator('[data-testid="clockingWidget_clockInOutBtn"]');
+    await checkinBtn.click();
 
+    const confirmBtn = page.locator('[data-testid="clockingWidget_clockNoReason"]');
     if (config.dev === true) {
-      await expect(checkinBtn).toBeVisible();
+      await expect(confirmBtn).toBeVisible();
     } else {
-      await checkinBtn.click();
+      await Promise.all([
+        page.waitForResponse(`https://${tenant}.myprotime.eu/api/clocking/realtime/v2/attempt`),
+        confirmBtn.click(),
+      ]);
     }
   }
 });
