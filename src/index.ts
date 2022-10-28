@@ -24,10 +24,14 @@ const timeToDate = (now: Date) => (time: Time) => {
   return d;
 }
 
-const printNext = (schedule: Date[], now: Date) => {
-  const nextDay = new Date(schedule[0]);
-  nextDay.setDate(now.getDate() + 1);
-  console.log(`Next check-in/out at: ${schedule[next] || nextDay}`);
+const addZero = (n: number) => n < 10 ? `0${n}` : `${n}`;
+
+const printNext = (schedule: Date[]) => {
+  const nextDate = schedule[next];
+  const hours = nextDate.getHours();
+  const minutes = addZero(nextDate.getMinutes());
+
+  console.log(`Next check in/out at: ${hours}:${minutes}`);
 }
 
 const run = async (checkInSchedule: string[][], discovery: boolean) => {
@@ -43,10 +47,14 @@ const run = async (checkInSchedule: string[][], discovery: boolean) => {
     .map(parseTime)
     .map(timeToDate(now));
 
-  const nextNext = schedule.findIndex((d) => d > now);
+  let nextNext = schedule.findIndex((d) => d > now);
+  if (nextNext === -1) {
+    nextNext = 0;
+  }
+
   if (discovery) {
     next = nextNext;
-    printNext(schedule, now);
+    printNext(schedule);
     return;
   }
 
@@ -62,7 +70,7 @@ const run = async (checkInSchedule: string[][], discovery: boolean) => {
     console.error('Unable to check-in', e);
   }
 
-  printNext(schedule, now);
+  printNext(schedule);
 };
 
 fs.readFile('config.json').then((json) => {
