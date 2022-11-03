@@ -38,8 +38,8 @@ const run = async (checkInSchedule: string[][], discovery: boolean) => {
   setTimeout(() => run(checkInSchedule, false), 5000);
 
   const now = new Date();
-  const days = checkInSchedule[now.getDay() - 1];
-  if (days.length == 0) {
+  const days = checkInSchedule[now.getDay()];
+  if (days === undefined || days.length == 0) {
     return;
   }
 
